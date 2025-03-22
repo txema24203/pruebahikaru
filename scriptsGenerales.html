@@ -1,0 +1,49 @@
+ <!-- scriptsGenerales.html -->
+ <script>
+        // Mostrar y ocultar secciones dinámicamente
+        function showSection(sectionId) {
+          const sections = document.querySelectorAll('.section');
+          sections.forEach(section => {
+            if (section.id === sectionId) {
+              section.style.display = 'block';
+
+              // Cargar datos al entrar en la sección
+              if (sectionId === 'oposiciones') {
+                cargarCombosOposiciones();
+              } else if (sectionId === 'bloques') {
+                cargarCombosBloques();
+              }
+            } else {
+              section.style.display = 'none';
+            }
+          });
+        }
+
+        // Mostrar la sección inicial (por defecto Oposiciones)
+        window.onload = function() {
+          showSection('oposiciones');
+          cargarDatos();
+        };
+        
+        // Cargar datos en los combos correspondientes
+        function cargarDatos() {
+          cargarCombosOposiciones();
+          cargarCombosBloques();
+
+        }
+
+        // Función para cargar contenido dinámico
+        function loadSection(section) {
+            google.script.run.withSuccessHandler(updateContent).getSectionHTML(section);
+        }
+
+        function updateContent(html) {
+            document.getElementById("content").innerHTML = html;
+        }
+
+        // Llama a la función al cargar la página
+        document.addEventListener("DOMContentLoaded", function() {
+            loadSection("oposiciones"); // Carga la sección inicial
+        });
+
+ </script>

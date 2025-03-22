@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gestión de Temario</title>
+    <?!= include('scriptsOposiciones') ?>
+    <?!= include('scriptsBloques') ?>
+    <?!= include('scriptsTemas') ?>
+    <?!= include('scriptsGenerales') ?>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+      }
+
+      header {
+        background-color: #007bff;
+        color: white;
+        padding: 1rem 2rem;
+        text-align: center;
+      }
+
+      nav {
+        display: flex;
+        justify-content: center;
+        background-color: #0056b3;
+        padding: 0.5rem 0;
+      }
+
+      nav button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      nav button:hover {
+        background-color: #0056b3;
+      }
+
+      .container {
+        padding: 1rem 2rem;
+      }
+
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      table, th, td {
+        border: 1px solid #ddd;
+      }
+
+      th, td {
+        padding: 0.5rem;
+        text-align: left;
+      }
+
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      h3 {
+        margin-top: 1.5rem;
+      }
+    </style>
+</head>
+<body>
+    <h1>Gestión de Temario</h1>
+    <nav>
+        <button onclick="showSection('oposiciones')">Oposiciones</button>
+        <button onclick="showSection('bloques')">Bloques</button>
+        <button onclick="showSection('temas')">Temas</button>
+        <button onclick="showSection('test')">Test</button>
+        <button onclick="showSection('conceptos')">Conceptos</button>
+        <button onclick="showSection('estudio')">Estudio</button>
+        <button onclick="showSection('repasos')">Repasos</button>
+    </nav>
+    <div class="container">
+       <!-- Sección Oposiciones -->  
+      <div id="oposiciones" class="section">
+        <h2>Gestión de Oposiciones</h2>
+
+        <!-- Formulario para agregar una nueva oposición -->
+        <h3>Insertar Oposición</h3>
+        <input type="text" id="nombreOposicion" placeholder="Nombre de la oposición" />
+        <button onclick="agregarOposicion()">Agregar</button>
+
+        <!-- Formulario para actualizar una oposición -->
+        <h3>Actualizar Oposición</h3>
+        <select id="comboOposicionesActualizar"></select>
+        <input type="text" id="nuevoNombreOposicion" placeholder="Nuevo nombre" />
+        <button onclick="actualizarOposicion()">Actualizar</button>
+
+        <!-- Formulario para eliminar una oposición -->
+        <h3>Eliminar Oposición</h3>
+        <select id="comboOposicionesEliminar"></select>
+        <button onclick="eliminarOposicion()">Eliminar</button>
+
+        <!-- Formulario para vincular temas a una oposición -->
+        <h3>Vincular Temas a Oposición</h3>
+        <select id="comboOposicionesVincular" onchange="cargarTemasDisponiblesParaVincular(this.value)">
+          <option value="">Selecciona una oposición</option>
+        </select>
+        <select id="comboTemasDisponiblesOposiciones"></select>
+        <button onclick="vincularTemaOposicion()">Vincular Tema</button>
+
+        <!-- Tabla para mostrar las oposiciones -->
+        <h3>Listar Oposiciones</h3>
+        <button onclick="listarOposiciones()">Mostrar</button>
+        <div id="tablaOposiciones"></div> <!-- Contenedor para la tabla de oposiciones -->
+        <div id="temasVinculados"></div> <!-- Contenedor para mostrar los temas vinculados de Oposiciones-->
+      </div>
+
+      <!-- Sección Bloques -->
+      <div id="bloques" class="section">
+        <h2>Gestión de Bloques</h2>
+
+        <!-- Formulario para agregar un bloque -->
+        <h3>Insertar Bloque</h3>
+        <input type="text" id="bloqueNombre" placeholder="Nombre del bloque" />
+        <button onclick="insertBloque()">Agregar</button>
+
+        <!-- Formulario para actualizar un bloque -->
+        <h3>Actualizar Bloque</h3>
+        <select id="comboBloquesActualizar"></select>
+        <input type="text" id="bloqueNuevoNombre" placeholder="Nuevo nombre" />
+        <button onclick="updateBloque()">Actualizar</button>
+
+        <!-- Formulario para eliminar un bloque -->
+        <h3>Eliminar Bloque</h3>
+        <select id="comboBloquesEliminar"></select>
+        <button onclick="deleteBloque()">Eliminar</button>
+
+        <!-- Formulario para vincular un tema a un bloque -->
+        <h3>Vincular Tema a Bloque</h3>
+        <select id="comboBloquesVincular"></select>
+        <select id="comboTemasDisponiblesBloques"></select>
+        <button onclick="vincularTemaABloque()">Vincular Tema</button>
+
+        <!-- Tabla para mostrar los bloques -->
+        <h3>Listar Bloques</h3>
+        <button onclick="listarBloques()">Mostrar</button>
+        <div id="bloquesTabla"></div>
+        <div id="temasVinculadosBloque">
+        <!-- Contenedor para mostrar los temas vinculados a un bloque -->
+      </div>
+
+      <!-- Sección Temas -->
+      <div id="temas" class="section">
+        <h2>Gestión de Temas</h2>
+        <p>Contenido relacionado con Temas.</p>
+      </div>
+
+      <!-- Sección Estudio -->
+      <div id="estudio" class="section">
+        <h2>Gestión de Estudio</h2>
+        <p>Contenido relacionado con Estudio.</p>
+      </div>
+
+      <!-- Sección Test -->
+      <div id="test" class="section">
+        <h2>Gestión de Test</h2>
+        <p>Contenido relacionado con Test.</p>
+      </div>
+
+      <!-- Sección Conceptos -->
+      <div id="conceptos" class="section">
+        <h2>Gestión de Conceptos</h2>
+        <p>Contenido relacionado con Conceptos.</p>
+      </div>
+
+      <!-- Sección Repasos -->
+      <div id="repasos" class="section">
+        <h2>Gestión de Repasos</h2>
+        <p>Contenido relacionado con Repasos.</p>
+      </div>
+
+    </div>
+     
+</body>
+</html>
