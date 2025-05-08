@@ -168,7 +168,35 @@
       <!-- Sección Temas -->
       <div id="temas" class="section">
         <h2>Gestión de Temas</h2>
-        <p>Contenido relacionado con Temas.</p>
+        <!-- Insertar Tema -->
+        <h3>Insertar Tema</h3>
+        <input type="text" id="temaNombre" placeholder="Nombre del tema" />
+        <select id="comboTemasPadre"><option value="">(Opcional) Tema padre</option></select>
+        <select id="comboBloquesInsertar"><option value="">(Opcional) Bloque (solo para temas de nivel 1)</option></select>
+        <input type="number" id="temaPagDesde" placeholder="Página desde" />
+        <input type="number" id="temaPagHasta" placeholder="Página hasta" />
+        <label><input type="checkbox" id="temaMaquetado" /> Maquetado</label>
+        <button onclick="insertarTema()">Insertar Tema</button>
+
+        <!-- Actualizar Tema -->
+        <h3>Actualizar Tema</h3>
+        <select id="comboTemasActualizar"><option value="">Selecciona un tema</option></select>
+        <input type="text" id="nuevoNombreTema" placeholder="Nuevo nombre" />
+        <select id="nuevoBloqueTema"><option value="">(Opcional) Nuevo bloque</option></select>
+        <input type="number" id="nuevaPagDesde" placeholder="Página desde" />
+        <input type="number" id="nuevaPagHasta" placeholder="Página hasta" />
+        <label><input type="checkbox" id="nuevoMaquetadoTema" /> Maquetado</label>
+        <button onclick="actualizarTema()">Actualizar Tema</button>
+
+        <!-- Eliminar Tema -->
+        <h3>Eliminar Tema</h3>
+        <select id="comboTemasEliminar"><option value="">Selecciona un tema</option></select>
+        <button onclick="eliminarTema()">Eliminar Tema</button>
+
+        <!-- Listar Temas -->
+        <h3>Listar Temas</h3>
+        <button onclick="listarTemas()">Mostrar</button>
+        <div id="tablaTemas"></div>
       </div>
 
       <!-- Sección Estudio -->
