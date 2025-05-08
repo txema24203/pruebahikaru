@@ -1,4 +1,92 @@
 <!-- scriptsTemas.html -->
 <script>
+function cargarCombosTemasYBloques() {
+  google.script.run.withSuccessHandler(function(temas) {
+    const comboPadre = document.getElementById("comboTemasPadre");
+    const comboActualizar = document.getElementById("comboTemasActualizar");
+    const comboEliminar = document.getElementById("comboTemasEliminar");
+    comboPadre.innerHTML = '<option value="">(Opcional) Tema padre</option>';
+    comboActualizar.innerHTML = '<option value="">Selecciona un tema</option>';
+    comboEliminar.innerHTML = '<option value="">Selecciona un tema</option>';
+    temas.forEach(t => {
+      const option = new Option(t.nombre, t.id);
+      comboPadre.appendChild(option.cloneNode(true));
+      comboActualizar.appendChild(option.cloneNode(true));
+      comboEliminar.appendChild(option.cloneNode(true));
+    });
+  }).getTemas();
+
+  google.script.run.withSuccessHandler(function(bloques) {
+    const comboInsertar = document.getElementById("comboBloquesInsertar");
+    const comboActualizar = document.getElementById("nuevoBloqueTema");
+    comboInsertar.innerHTML = '<option value="">(Opcional) Bloque</option>';
+    comboActualizar.innerHTML = '<option value="">(Opcional) Bloque</option>';
+    bloques.forEach(b => {
+      const option = new Option(b.nombre, b.id);
+      comboInsertar.appendChild(option.cloneNode(true));
+      comboActualizar.appendChild(option.cloneNode(true));
+    });
+  }).getBloques();
+}
+
+document.addEventListener("DOMContentLoaded", cargarCombosTemasYBloques);
+
+function insertarTema() {
+  const nombre = document.getElementById("temaNombre").value;
+  const idPadre = document.getElementById("comboTemasPadre").value;
+  const idBloque = document.getElementById("comboBloquesInsertar").value;
+  const pagDesde = parseInt(document.getElementById("temaPagDesde").value);
+  const pagHasta = parseInt(document.getElementById("temaPagHasta").value);
+  const maquetado = document.getElementById("temaMaquetado").checked;
+
+  google.script.run.withSuccessHandler(() => {
+    alert("Tema insertado correctamente");
+    cargarCombosTemasYBloques();
+  }).addTema(nombre, idPadre || null, idBloque || null, pagDesde, pagHasta, maquetado);
+}
+
+function actualizarTema() {
+  const idTema = document.getElementById("comboTemasActualizar").value;
+  const nuevoNombre = document.getElementById("nuevoNombreTema").value;
+  const idBloque = document.getElementById("nuevoBloqueTema").value;
+  const pagDesde = parseInt(document.getElementById("nuevaPagDesde").value);
+  const pagHasta = parseInt(document.getElementById("nuevaPagHasta").value);
+  const maquetado = document.getElementById("nuevoMaquetadoTema").checked;
+
+  if (!idTema) return alert("Selecciona un tema para actualizar.");
+
+  google.script.run.withSuccessHandler(() => {
+    alert("Tema actualizado correctamente");
+    cargarCombosTemasYBloques();
+  }).updateTema(idTema, nuevoNombre, idBloque || null, pagDesde, pagHasta, maquetado);
+}
+
+function eliminarTema() {
+  const idTema = document.getElementById("comboTemasEliminar").value;
+  if (!idTema) return alert("Selecciona un tema para eliminar.");
+
+  if (confirm("¿Estás seguro de eliminar este tema?")) {
+    google.script.run.withSuccessHandler(() => {
+      alert("Tema eliminado correctamente");
+      cargarCombosTemasYBloques();
+    }).deleteTema(idTema);
+  }
+}
+
+function listarTemas() {
+  google.script.run.withSuccessHandler(function(temas) {
+    const contenedor = document.getElementById("tablaTemas");
+    if (!temas || temas.length === 0) {
+      contenedor.innerHTML = "<p>No hay temas disponibles.</p>";
+      return;
+    }
+    let html = `<table><thead><tr><th>ID</th><th>Nombre</th><th>ID Padre</th><th>ID Bloque</th><th>Desde</th><th>Hasta</th><th>Maquetado</th></tr></thead><tbody>`;
+    temas.forEach(t => {
+      html += `<tr><td>${t.id}</td><td>${t.nombre}</td><td>${t.id_padre || ''}</td><td>${t.id_bloque || ''}</td><td>${t.pag_desde || ''}</td><td>${t.pag_hasta || ''}</td><td>${t.maquetado ? 'Sí' : 'No'}</td></tr>`;
+    });
+    html += "</tbody></table>";
+    contenedor.innerHTML = html;
+  }).getTemas();
+}
 
 </script>
