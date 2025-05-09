@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", cargarCombosTemasYBloques);
 
 function insertarTema() {
   const nombre = document.getElementById("temaNombre").value;
+  const nombreCompleto = document.getElementById("temaNombreCompleto").value;
+  const prenombre = document.getElementById("temaPrenombre").value;
   const idPadre = document.getElementById("comboTemasPadre").value;
   const idBloque = document.getElementById("comboBloquesInsertar").value;
   const pagDesde = parseInt(document.getElementById("temaPagDesde").value);
@@ -42,12 +44,14 @@ function insertarTema() {
   google.script.run.withSuccessHandler(() => {
     alert("Tema insertado correctamente");
     cargarCombosTemasYBloques();
-  }).addTema(nombre, idPadre || null, idBloque || null, pagDesde, pagHasta, maquetado);
+  }).addTema(nombre, nombreCompleto, prenombre, idPadre || null, idBloque || null, pagDesde, pagHasta, maquetado);
 }
 
 function actualizarTema() {
   const idTema = document.getElementById("comboTemasActualizar").value;
   const nuevoNombre = document.getElementById("nuevoNombreTema").value;
+  const nuevoNombreCompleto = document.getElementById("nuevoNombreCompleto").value;
+  const nuevoPrenombre = document.getElementById("nuevoPrenombreTema").value;
   const idBloque = document.getElementById("nuevoBloqueTema").value;
   const pagDesde = parseInt(document.getElementById("nuevaPagDesde").value);
   const pagHasta = parseInt(document.getElementById("nuevaPagHasta").value);
@@ -58,7 +62,7 @@ function actualizarTema() {
   google.script.run.withSuccessHandler(() => {
     alert("Tema actualizado correctamente");
     cargarCombosTemasYBloques();
-  }).updateTema(idTema, nuevoNombre, idBloque || null, pagDesde, pagHasta, maquetado);
+  }).updateTema(idTema, nuevoNombre, nuevoNombreCompleto, nuevoPrenombre, idBloque || null, pagDesde, pagHasta, maquetado);
 }
 
 function eliminarTema() {
@@ -80,9 +84,9 @@ function listarTemas() {
       contenedor.innerHTML = "<p>No hay temas disponibles.</p>";
       return;
     }
-    let html = `<table><thead><tr><th>ID</th><th>Nombre</th><th>ID Padre</th><th>ID Bloque</th><th>Desde</th><th>Hasta</th><th>Maquetado</th></tr></thead><tbody>`;
+    let html = `<table><thead><tr><th>ID</th><th>Nombre</th><th>Nombre Completo</th><th>Prenombre</th><th>ID Padre</th><th>ID Bloque</th><th>Desde</th><th>Hasta</th><th>Maquetado</th></tr></thead><tbody>`;
     temas.forEach(t => {
-      html += `<tr><td>${t.id}</td><td>${t.nombre}</td><td>${t.id_padre || ''}</td><td>${t.id_bloque || ''}</td><td>${t.pag_desde || ''}</td><td>${t.pag_hasta || ''}</td><td>${t.maquetado ? 'Sí' : 'No'}</td></tr>`;
+      html += `<tr><td>${t.id}</td><td>${t.nombre}</td><td>${t.nombre_completo || ''}</td><td>${t.prenombre || ''}</td><td>${t.id_padre || ''}</td><td>${t.id_bloque || ''}</td><td>${t.pag_desde || ''}</td><td>${t.pag_hasta || ''}</td><td>${t.maquetado ? 'Sí' : 'No'}</td></tr>`;
     });
     html += "</tbody></table>";
     contenedor.innerHTML = html;
