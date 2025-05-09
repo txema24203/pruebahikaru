@@ -1,4 +1,4 @@
- <!-- scriptsGenerales.html -->
+<!-- scriptsGenerales.html -->
  <script>
         // Mostrar y ocultar secciones dinámicamente
         function showSection(sectionId) {
@@ -8,10 +8,16 @@
               section.style.display = 'block';
 
               // Cargar datos al entrar en la sección
-              if (sectionId === 'oposiciones') {
-                cargarCombosOposiciones();
-              } else if (sectionId === 'bloques') {
-                cargarCombosBloques();
+              switch (sectionId) {
+                case 'oposiciones':
+                  if (typeof cargarCombosOposiciones === 'function') cargarCombosOposiciones();
+                  break;
+                case 'bloques':
+                  if (typeof cargarCombosBloques === 'function') cargarCombosBloques();
+                  break;
+                case 'temas':
+                  if (typeof cargarCombosTemasYBloques === 'function') cargarCombosTemasYBloques();
+                  break;
               }
             } else {
               section.style.display = 'none';
@@ -27,10 +33,11 @@
         
         // Cargar datos en los combos correspondientes
         function cargarDatos() {
-          cargarCombosOposiciones();
-          cargarCombosBloques();
-
+          if (typeof cargarCombosOposiciones === 'function') cargarCombosOposiciones();
+          if (typeof cargarCombosBloques === 'function') cargarCombosBloques();
+          if (typeof cargarCombosTemasYBloques === 'function') cargarCombosTemasYBloques();
         }
+
 
         // Función para cargar contenido dinámico
         function loadSection(section) {
