@@ -105,7 +105,7 @@ function getTemasEnArbolOrdenados() {
  * Devuelve todos los temas con sus campos.
  */
 function getTemas() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Temas");
+  const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
   const temas = data.slice(1).map(row => {
@@ -130,7 +130,7 @@ function getTemas() {
  * Añade un nuevo tema a la hoja.
  */
 function addTema(nombre, nombreCompleto, prenombre, idPadre, idBloque, pagDesde, pagHasta, maquetado) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Temas");
+  const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -162,7 +162,7 @@ function calcularNivel(idPadre, data, headers) {
  * Actualiza los datos de un tema existente.
  */
 function updateTema(idTema, nombre, nombreCompleto, prenombre, idBloque, pagDesde, pagHasta, maquetado) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Temas");
+  const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -185,7 +185,7 @@ function updateTema(idTema, nombre, nombreCompleto, prenombre, idBloque, pagDesd
  * Elimina un tema si no tiene subtemas.
  */
 function deleteTema(idTema) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Temas");
+  const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
@@ -199,5 +199,7 @@ function deleteTema(idTema) {
     }
   }
 }
+
+
 
 
