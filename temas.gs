@@ -14,101 +14,93 @@ function getTemasEnArbol() {
   const temasData = temasSheet.getDataRange().getValues();
   temasData.shift(); // Eliminar encabezados
 
-  // Crear un mapa para almacenar los temas por ID
   const temasMap = new Map();
   temasData.forEach(row => {
-    const idTema = row[temasColumns['id_tema']];
-    const idPadre = row[temasColumns['id_padre']];
-    const nivel = row[temasColumns['nivel']];
-    const prenombre = row[temasColumns['prenombre']];
-    const nombre = row[temasColumns['nombre']];
-
-    temasMap.set(idTema, { id: idTema, idPadre, nivel, prenombre, nombre, hijos: [] });
+    const tema = {
+      id: row[temasColumns['id_tema']],
+      idPadre: row[temasColumns['id_padre']],
+      nivel: row[temasColumns['nivel']],
+      prenombre: row[temasColumns['prenombre']],
+      nombre: row[temasColumns['nombre']],
+      id_bloque: row[temasColumns['id_bloque']],
+      pag_desde: row[temasColumns['pag_desde']],
+      pag_hasta: row[temasColumns['pag_hasta']],
+      maquetado: row[temasColumns['maquetado']] === true || row[temasColumns['maquetado']] === 'TRUE',
+      hijos: []
+    };
+    temasMap.set(tema.id, tema);
   });
 
-  // Construir la estructura jerárquica
   const temasRaiz = [];
   temasMap.forEach(tema => {
     if (tema.idPadre) {
       const padre = temasMap.get(tema.idPadre);
-      if (padre) {
-        padre.hijos.push(tema);
-      }
+      if (padre) padre.hijos.push(tema);
     } else {
       temasRaiz.push(tema);
     }
   });
 
-  // Ordenar recursivamente los temas
   function ordenarTemas(temas) {
-    return temas
-      .sort((a, b) => {
-        if (a.nivel === b.nivel) {
-          return a.prenombre.localeCompare(b.prenombre) || a.nombre.localeCompare(b.nombre);
-        }
-        return a.nivel - b.nivel;
-      })
-      .map(tema => ({ ...tema, hijos: ordenarTemas(tema.hijos) }));
+    return temas.sort((a, b) => {
+      return (a.prenombre || '').localeCompare(b.prenombre || '') || (a.nombre || '').localeCompare(b.nombre || '');
+    }).map(tema => ({ ...tema, hijos: ordenarTemas(tema.hijos) }));
   }
 
   return ordenarTemas(temasRaiz);
 }
 
 function getTemasEnArbolOrdenados() {
-  const temasSheet = getGoogleSheet('Temas');
-  const temasColumns = getColumnIndices('Temas');
-  const temasData = temasSheet.getDataRange().getValues();
-  temasData.shift(); // Eliminar encabezados
-
-  // Crear un mapa para almacenar los temas por ID
-  const temasMap = new Map();
-  temasData.forEach(row => {
-    const idTema = row[temasColumns['id_tema']];
-    const idPadre = row[temasColumns['id_padre']];
-    const nivel = row[temasColumns['nivel']];
-    const prenombre = row[temasColumns['prenombre']] || '';
-    const nombre = row[temasColumns['nombre']];
-
-    temasMap.set(idTema, { id: idTema, idPadre, nivel, prenombre, nombre, hijos: [] });
-  });
-
-  // Construir la estructura jerárquica
-  const temasRaiz = [];
-  temasMap.forEach(tema => {
-    if (tema.idPadre) {
-      const padre = temasMap.get(tema.idPadre);
-      if (padre) {
-        padre.hijos.push(tema);
-      }
-    } else {
-      temasRaiz.push(tema);
-    }
-  });
-
-  // Ordenar recursivamente los temas por nivel y prenombre
-  function ordenarTemas(temas) {
-    return temas
-      .sort((a, b) => a.prenombre.localeCompare(b.prenombre) || a.nombre.localeCompare(b.nombre))
-      .map(tema => ({
-        ...tema,
-        hijos: ordenarTemas(tema.hijos)
-      }));
-  }
-
-  return ordenarTemas(temasRaiz);
+  return getTemasEnArbol();
 }
 //****************************************************
 //FIN Funciones para entidades de Oposiciones y Bloques
 
+function getTemasPadre() {
+  const sheet = getGoogleSheet('Temas');
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  return data.slice(1).filter(row => !row[headers.indexOf("id_padre")]).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = row[i]);
+    return {
+      id: obj.id_tema,
+      nombre: obj.nombre,
+      prenombre: obj.prenombre || ""
+    };
+  });
+}
 
-/**
- * Devuelve todos los temas con sus campos.
- */
+function getTemaPorId(id) {
+  const sheet = getGoogleSheet('Temas');
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const data = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(id)) {
+      const obj = {};
+      headers.forEach((h, idx) => obj[h] = data[i][idx]);
+      return {
+        id: obj.id_tema,
+        nombre: obj.nombre,
+        nombre_completo: obj.nombre_completo,
+        prenombre: obj.prenombre,
+        id_padre: obj.id_padre,
+        id_bloque: obj.id_bloque,
+        pag_desde: obj.pag_desde,
+        pag_hasta: obj.pag_hasta,
+        maquetado: obj.maquetado === true || obj.maquetado === 'TRUE'
+      };
+    }
+  }
+  throw new Error("Tema no encontrado");
+}
+
 function getTemas() {
   const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
-  const temas = data.slice(1).map(row => {
+  return data.slice(1).map(row => {
     const obj = {};
     headers.forEach((h, i) => obj[h] = row[i]);
     return {
@@ -123,12 +115,8 @@ function getTemas() {
       maquetado: obj.maquetado === true || obj.maquetado === "TRUE"
     };
   });
-  return temas;
 }
 
-/**
- * Añade un nuevo tema a la hoja.
- */
 function addTema(nombre, nombreCompleto, prenombre, idPadre, idBloque, pagDesde, pagHasta, maquetado) {
   const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
@@ -152,15 +140,6 @@ function addTema(nombre, nombreCompleto, prenombre, idPadre, idBloque, pagDesde,
   sheet.appendRow(fila);
 }
 
-function calcularNivel(idPadre, data, headers) {
-  if (!idPadre) return 1;
-  const filaPadre = data.find(r => String(r[0]) === String(idPadre));
-  return filaPadre ? Number(filaPadre[headers.indexOf("nivel")]) + 1 : 1;
-}
-
-/**
- * Actualiza los datos de un tema existente.
- */
 function updateTema(idTema, nombre, nombreCompleto, prenombre, idBloque, pagDesde, pagHasta, maquetado) {
   const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
@@ -181,9 +160,6 @@ function updateTema(idTema, nombre, nombreCompleto, prenombre, idBloque, pagDesd
   }
 }
 
-/**
- * Elimina un tema si no tiene subtemas.
- */
 function deleteTema(idTema) {
   const sheet = getGoogleSheet('Temas');
   const data = sheet.getDataRange().getValues();
@@ -200,6 +176,8 @@ function deleteTema(idTema) {
   }
 }
 
-
-
-
+function calcularNivel(idPadre, data, headers) {
+  if (!idPadre) return 1;
+  const filaPadre = data.find(r => String(r[0]) === String(idPadre));
+  return filaPadre ? Number(filaPadre[headers.indexOf("nivel")]) + 1 : 1;
+}
