@@ -307,6 +307,7 @@ function getTemasVinculadosEnArbol(idOposicion) {
 }
 
 function getTemasVinculadosEnArbolOrdenados(idOposicion) {
+  console.log("Dentro de getTemasVinculadosEnArbolOrdenados y el idOposicion: "+idOposicion);
   const temasArbol = getTemasEnArbolOrdenados(); // Obtener árbol completo
   const temaOposicionSheet = getGoogleSheet('Tema_Oposicion');
   const temaOposicionColumns = getColumnIndices('Tema_Oposicion');
@@ -326,7 +327,7 @@ function getTemasVinculadosEnArbolOrdenados(idOposicion) {
         hijos: filtrarJerarquia(tema.hijos)
       }));
   }
-
+  
   return filtrarJerarquia(temasArbol); // Devolver árbol jerárquico de temas vinculados
 }
 
