@@ -47,7 +47,8 @@ function getSectionHTML(section) {
     return isOposicionNombreUnico(nombre); // Función definida en `oposiciones.gs`
   }
   function getOposicionesOrdenadas() {
-    return getOposicionesOrdenadas(); // Función definida en `oposiciones.gs`
+    //return getOposicionesOrdenadas(); // Función definida en `oposiciones.gs`
+     return getOposicionesConCache(); // Usa la versión con caché
   }
 
   function addOposicion(nombre) {
@@ -139,7 +140,8 @@ function getSectionHTML(section) {
   }
 
   function getBloquesOrdenados()  {
-    return getBloquesOrdenados();  // Función definida en `bloques.gs`
+    //return getBloquesOrdenados();  // Función definida en `bloques.gs`
+     return getTemasConCache(); // Usa la versión con caché
   }
 //FIN BLOQUES
 
@@ -152,7 +154,8 @@ function getSectionHTML(section) {
   }
 
   function getTemasEnArbolOrdenados() {
-    return getTemasEnArbolOrdenados(); // Función definida en `temas.gs`
+    //return getTemasEnArbolOrdenados(); // Función definida en `temas.gs`
+     return getTemasEnArbolOrdenadosConCache(); // Usa la versión con caché
   }
 
 //FIN TEMAS
