@@ -156,3 +156,56 @@ function getSectionHTML(section) {
   }
 
 //FIN TEMAS
+
+// FUNCIONES PARA EL SISTEMA DE ESTUDIO
+function obtenerSiguienteConcepto(idOposicion, modoEstudio) {
+  return obtenerSiguienteConcepto(idOposicion, modoEstudio); // Función definida en estudio.gs
+}
+
+function guardarProgresoConcepto(idConcepto, nivelComprension, tiempoEstudio) {
+  return guardarProgresoConcepto(idConcepto, nivelComprension, tiempoEstudio); // Función definida en estudio.gs
+}
+
+function getEstadisticasEstudio(idOposicion) {
+  return getEstadisticasEstudio(idOposicion); // Función definida en estudio.gs
+}
+
+function getEstadisticasGenerales() {
+  return getEstadisticasGenerales(); // Función definida en estudio.gs
+}
+
+// FUNCIONES CON CACHÉ PARA MEJORAR RENDIMIENTO
+function getOposicionesOrdenadas() {
+  return withCache('oposiciones_ordenadas', () => {
+    const sheet = getGoogleSheet('Oposiciones');
+    const columns = getColumnIndices('Oposiciones');
+    const data = sheet.getDataRange().getValues();
+    data.shift();
+    return data
+      .sort((a, b) => a[columns['nombre']].localeCompare(b[columns['nombre']]))
+      .map(row => ({
+        id: row[columns['id_oposicion']],
+        nombre: row[columns['nombre']]
+      }));
+  });
+}
+
+function getTemasEnArbolOrdenados() {
+  return withCache('temas_arbol_ordenados', () => {
+    // Llamar a la función original que ya tienes
+    return getTemasEnArbol();
+  }, 600); // Cache por 10 minutos
+}
+
+// INVALIDAR CACHÉ CUANDO SE MODIFIQUEN DATOS
+function invalidarCacheOposiciones() {
+  invalidateCache(['oposiciones', 'oposiciones_ordenadas']);
+}
+
+function invalidarCacheTemas() {
+  invalidateCache(['temas', 'temas_arbol', 'temas_arbol_ordenados']);
+}
+
+function invalidarCacheConceptos() {
+  invalidateCache(['conceptos', 'tipos_concepto']);
+}
